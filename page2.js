@@ -1,16 +1,14 @@
 const texts = {
-    beginner: "The quick brown fox jumps over the lazy dog.\nSimple words make up this beginner test.\nTake your time and focus on accuracy.",
-    medium: "Programming is the process of creating a set of instructions.\nProgramming tells a computer how to perform a task.\nIt can be done using many programming languages.",
-    high: "In quantum mechanics, quantum entanglement is a phenomenon.\nQuantum states of particles cannot be described independently.\nParticles remain connected even when separated by large distances."
+    beginner: "The quick brown fox jumps over the lazy dog. Simple words make up this beginner test. Take your time and focus on accuracy.",
+    medium: "Programming is the process of creating a set of instructions. Programming tells a computer how to perform a task. It can be done using many programming languages.",
+    high: "In quantum mechanics, quantum entanglement is a phenomenon. Quantum states of particles cannot be described independently. Particles remain connected even when separated by large distances."
 };
 
-// Function to add line breaks and extra spaces
+// Function to add extra spaces between words if needed
 function formatText(text) {
-    // Add extra spaces between words
+    // Add extra spaces between words (optional, can be removed if not required)
     let spacedText = text.split(' ').join('  ');
-    
-    // Ensure line breaks are preserved
-    return spacedText.replace(/\n/g, '\n\n');
+    return spacedText;
 }
 
 // Update the texts with formatting
@@ -34,28 +32,24 @@ function setDifficulty(level) {
     const typingInput = document.getElementById('typing-input');
     typingInput.value = '';
     typingInput.focus();
-    // Remove timer start from here
     saveToLocalStorage('startTime', null);
     
-    // Add click event listener to start timer
     typingInput.addEventListener('click', startTimerOnFirstClick);
     typingInput.addEventListener('input', handleTyping);
 }
 
-// Add new function to handle first click
 function startTimerOnFirstClick() {
     if (!typingStarted) {
         typingStarted = true;
         startTime = new Date();
         saveToLocalStorage('startTime', startTime);
         startTimer();
-        // Remove the click event listener after first use
         document.getElementById('typing-input').removeEventListener('click', startTimerOnFirstClick);
     }
 }
 
 function startTimer() {
-    timeLeft = 0;  // Start from 0
+    timeLeft = 0;
     updateTimer();
     timer = setInterval(() => {
         timeLeft++;
