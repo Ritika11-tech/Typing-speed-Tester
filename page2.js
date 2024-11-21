@@ -1,17 +1,14 @@
 const texts = {
-    beginner: "The quick brown fox jumps over the lazy dog. Simple words make up this beginner test. Take your time and focus on accuracy.",
-    medium: "Programming is the process of creating a set of instructions. Programming tells a computer how to perform a task. It can be done using many programming languages.",
-    high: "In quantum mechanics, quantum entanglement is a phenomenon. Quantum states of particles cannot be described independently. Particles remain connected even when separated by large distances."
+    beginner: "The quick brown fox jumps over the lazy dog.",
+    medium: "Programming is the process of creating a set of instructions.",
+    high: "In quantum mechanics, quantum entanglement is a phenomenon."
 };
 
-// Function to add extra spaces between words if needed
 function formatText(text) {
-    // Add extra spaces between words (optional, can be removed if not required)
     let spacedText = text.split(' ').join('  ');
     return spacedText;
 }
 
-// Update the texts with formatting
 Object.keys(texts).forEach(key => {
     texts[key] = formatText(texts[key]);
 });
