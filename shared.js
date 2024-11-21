@@ -3,7 +3,6 @@ const texts = {
     medium: "Programming is the process of creating a set of instructions.\n Programming tells a computer how to perform a task.\n It can be done using many programming languages.",
     high: "In quantum mechanics, quantum entanglement is a phenomenon.\n Quantum states of particles cannot be described independently.\n Particles remain connected even when separated by large distances."
 };
-
 let currentPage = 1;
 let timer;
 let timeLeft = 60;
@@ -26,13 +25,13 @@ function getFromLocalStorage(key) {
     return item ? JSON.parse(item) : null;
 }
 
-// Function to format text with extra spaces and line breaks
+// Updated function to format text with non-breaking spaces and double line breaks
 function formatText(text) {
     // Replace single line breaks with double line breaks
     let formattedText = text.replace(/\n/g, '\n\n');
     
-    // Add extra spaces between words
-    formattedText = formattedText.split(' ').join('  ');
+    // Add extra spaces between words using non-breaking spaces
+    formattedText = formattedText.split(' ').join(' \u00A0');
     
     return formattedText;
 }
