@@ -11,7 +11,7 @@ let timeLeft = 60;
 let typingStarted = false;
 let username = '';
 let startTime, endTime;
-let currentText = '';
+let currentText = ' ';
 let currentDifficulty = '';
 
 function navigateToPage(pageNumber) {
