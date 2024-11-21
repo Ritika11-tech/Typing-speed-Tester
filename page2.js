@@ -1,14 +1,11 @@
 function setDifficulty(level) {
-    // Add extra line breaks and spacing
-    let formattedText = formatText(texts[level]);
-    
-    currentText = formattedText;
+    currentText = texts[level];
     currentDifficulty = level;
     saveToLocalStorage('currentDifficulty', level);
     
     const textDisplay = document.querySelector('.text-display');
     textDisplay.innerHTML = currentText.split('').map(char =>
-        `<span>${char === '\n' ? '<br>' : char}</span>`
+        `<span>${char}</span>`
     ).join('');
     
     document.querySelector('.typing-container').style.display = 'block';
@@ -17,22 +14,13 @@ function setDifficulty(level) {
     const typingInput = document.getElementById('typing-input');
     typingInput.value = '';
     typingInput.focus();
+
+    // Remove timer start from here
     saveToLocalStorage('startTime', null);
     
     // Add click event listener to start timer
     typingInput.addEventListener('click', startTimerOnFirstClick);
     typingInput.addEventListener('input', handleTyping);
-}
-
-// Function to add extra spaces and line breaks
-function formatText(text) {
-    // Replace single line breaks with double line breaks
-    let formattedText = text.replace(/\n/g, '\n\n');
-    
-    // Add extra spaces between words
-    formattedText = formattedText.split(' ').join('  ');
-    
-    return formattedText;
 }
 
 // Add new function to handle first click
@@ -73,7 +61,7 @@ function handleTyping(e) {
         }
     });
     
-    if (typedText === currentText.replace(/\n/g, '')) {
+    if (typedText === currentText) {
         endTest();
     }
 }
@@ -93,3 +81,5 @@ function endTest() {
     saveToLocalStorage('typedText', document.getElementById('typing-input').value);
     navigateToPage(3);
 }
+
+
