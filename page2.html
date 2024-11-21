@@ -1,31 +1,278 @@
-<!-- page2.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speed Typing Test - Difficulty Selection</title>
-    <link rel="stylesheet" href="page2.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a2e; /* Fallback background color */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900"><rect fill="%231a1a2e" width="1600" height="900"/><polygon points="0,600 0,900 1600,900 1600,0" fill="%2300ff88" opacity="0.1"/></svg>');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            width: 100%;
+        }
+        .page {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        .btn {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            background: #00ff88;
+            color: #1a1a2e;
+            cursor: pointer;
+            margin: 1rem;
+            transition: all 0.3s ease;
+            width: auto;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        .difficulty-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .typing-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+            width: 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+        .timer {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #00ff88;
+        }
+        #typing-input {
+            height: 100px;
+            width: 100%;
+            max-width: 1000px;
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+        }
+        .text-display {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .text-display span.correct { color: #00ff88; }
+        .text-display span.incorrect { 
+            color: #ff4444; 
+            text-decoration: underline; 
+        }
+        .text-display span.current {
+            background-color: rgba(0, 255, 136, 0.2);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="page active" id="page2">
-            <h1>Selelct Difficulty</h1>
+        <div class="page" id="page2">
+            <h1>Select Typing Test Difficulty</h1>
             <div class="difficulty-container">
-                <button class="btn" onclick="setDifficulty('beginner')">Beginner</button>
-                <button class="btn" onclick="setDifficulty('medium')">Medium</button>
-                <button class="btn" onclick="setDifficulty('high')">High</button>
+                <button class="btn" id="beginnerBtn">Beginner</button>
+                <button class="btn" id="mediumBtn">Medium</button>
+                <button class="btn" id="highBtn">High</button>
             </div>
-            <div class="typing-container" style="display: none;">
-
+            <div class="typing-container">
                 <div class="timer">0</div>
                 <div class="text-display"></div>
                 <textarea id="typing-input" rows="10"></textarea>
-                <button class="btn" onclick="submitTest()">Submit Test</button>
+                <button class="btn" id="submitBtn">Submit Test</button>
             </div>
         </div>
     </div>
-<!--     <script src="shared.js"></script> -->
-    <script src="page2.js"></script>
+
+    <script>
+        // Secure storage utility
+        const StorageUtil = {
+            save: function(key, value) {
+                try {
+                    sessionStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error("Storage error:", e);
+                }
+            },
+            get: function(key) {
+                try {
+                    const item = sessionStorage.getItem(key);
+                    return item ? JSON.parse(item) : null;
+                } catch (e) {
+                    console.error("Storage retrieval error:", e);
+                    return null;
+                }
+            }
+        };
+
+        // Test configuration
+        const testConfig = {
+            texts: {
+                beginner: "The quick brown fox jumps over the lazy dog.",
+                medium: "Programming is the process of creating a set of instructions.",
+                high: "In quantum mechanics quantum entanglement is a fundamental phenomenon."
+            },
+            state: {
+                currentText: '',
+                difficulty: '',
+                startTime: null,
+                endTime: null
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            difficultyBtns: {
+                beginner: document.getElementById('beginnerBtn'),
+                medium: document.getElementById('mediumBtn'),
+                high: document.getElementById('highBtn')
+            },
+            typingContainer: document.querySelector('.typing-container'),
+            textDisplay: document.querySelector('.text-display'),
+            typingInput: document.getElementById('typing-input'),
+            timer: document.querySelector('.timer'),
+            submitBtn: document.getElementById('submitBtn')
+        };
+
+        // Timer management
+        const TimerManager = {
+            interval: null,
+            seconds: 0,
+            start: function() {
+                this.seconds = 0;
+                this.update();
+                this.interval = setInterval(() => {
+                    this.seconds++;
+                    this.update();
+                }, 1000);
+            },
+            stop: function() {
+                clearInterval(this.interval);
+            },
+            update: function() {
+                elements.timer.textContent = this.seconds;
+            }
+        };
+
+        // Event Listeners
+        function initializeEventListeners() {
+            Object.keys(elements.difficultyBtns).forEach(level => {
+                elements.difficultyBtns[level].addEventListener('click', () => startTest(level));
+            });
+
+            elements.typingInput.addEventListener('input', handleTyping);
+            elements.submitBtn.addEventListener('click', endTest);
+        }
+
+        // Test Flow Functions
+        function startTest(difficulty) {
+            // Set current text based on difficulty
+            testConfig.state.currentText = testConfig.texts[difficulty];
+            testConfig.state.difficulty = difficulty;
+            
+            // Prepare text display
+            elements.textDisplay.innerHTML = testConfig.state.currentText
+                .split('')
+                .map(char => `<span>${char}</span>`)
+                .join('');
+            
+            // Show typing container, hide difficulty buttons
+            elements.typingContainer.style.display = 'block';
+            document.querySelector('.difficulty-container').style.display = 'none';
+            
+            // Prepare input
+            elements.typingInput.value = '';
+            elements.typingInput.focus();
+            
+            // Start timer and save start time
+            testConfig.state.startTime = new Date();
+            StorageUtil.save('testStart', testConfig.state.startTime);
+            TimerManager.start();
+        }
+
+        function handleTyping(e) {
+            const typedText = e.target.value;
+            const characters = document.querySelectorAll('.text-display span');
+            
+            characters.forEach((char, index) => {
+                char.classList.remove('correct', 'incorrect', 'current');
+                
+                if (index < typedText.length) {
+                    char.classList.add(
+                        char.innerText === typedText[index] ? 'correct' : 'incorrect'
+                    );
+                } else if (index === typedText.length) {
+                    char.classList.add('current');
+                }
+            });
+            
+            if (typedText === testConfig.state.currentText) {
+                endTest();
+            }
+        }
+
+        function endTest() {
+            // Stop timer
+            TimerManager.stop();
+            
+            // Record end time
+            testConfig.state.endTime = new Date();
+            StorageUtil.save('testEnd', testConfig.state.endTime);
+            StorageUtil.save('typedText', elements.typingInput.value);
+            StorageUtil.save('testDifficulty', testConfig.state.difficulty);
+            
+            // Navigate to results page (you'd replace this with actual navigation)
+            alert('Test completed! Redirecting to results...');
+        }
+
+        // Initialize
+        initializeEventListeners();
+    </script>
 </body>
 </html>
