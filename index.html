@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       background-color: #0a0a0a;
       color: #fff;
@@ -18,20 +18,18 @@
       align-items: center;
       overflow: hidden;
     }
-
     .container {
       text-align: center;
       position: relative;
       z-index: 1;
+      padding: 0 20px; /* Added padding for mobile */
     }
-
     .title {
-      font-size: 4rem;
+      font-size: 2.5rem; /* Reduced for mobile */
       margin-bottom: 1rem;
       opacity: 0;
       animation: fadeIn 1s ease-out forwards;
     }
-
     .typing-text {
       display: inline-block;
       overflow: hidden;
@@ -39,22 +37,19 @@
       border-right: 3px solid #fff;
       animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
     }
-
     .developers {
-      font-size: 2.5rem;
+      font-size: 1.5rem; /* Reduced for mobile */
       margin-top: 2rem;
       opacity: 0;
       animation: slideUp 1s ease-out 1s forwards;
       font-family: Georgia, 'Times New Roman', Times, serif;
       color: #00ff88;
     }
-
     
-
     .enter-button {
       margin-top: 3rem;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem; /* Slightly reduced for mobile */
+      font-size: 1rem; /* Reduced for mobile */
       background: linear-gradient(45deg, #00ff88, #00a3ff);
       border: none;
       border-radius: 30px;
@@ -64,11 +59,9 @@
       animation: fadeIn 1s ease-out 2s forwards;
       transition: transform 0.3s ease;
     }
-
     .enter-button:hover {
       transform: scale(1.1);
     }
-
     .background {
       position: fixed;
       top: 0;
@@ -81,7 +74,6 @@
       background-size: cover;
       z-index: 0;
     }
-
     .grid {
       position: fixed;
       width: 100%;
@@ -92,22 +84,31 @@
       z-index: 0;
       animation: gridMove 20s linear infinite;
     }
-
+    /* Media Query for Mobile Devices */
+    @media screen and (max-width: 600px) {
+      .title {
+        font-size: 2rem;
+      }
+      .developers {
+        font-size: 1.2rem;
+      }
+      .enter-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
+    }
     @keyframes typing {
       from { width: 0 }
       to { width: 100% }
     }
-
     @keyframes blink-caret {
       from, to { border-color: transparent }
       50% { border-color: #fff }
     }
-
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
-
     @keyframes slideUp {
       from {
         opacity: 0;
@@ -118,32 +119,20 @@
         transform: translateY(0);
       }
     }
-
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-20px); }
     }
-
     @keyframes gridMove {
       0% { transform: translateY(0); }
       100% { transform: translateY(30px); }
     }
-
-
   </style>
 </head>
 <body>
   <div class="background"></div>
-
   <div class="grid"></div>
   
-  <div class="stickers">
-    <div class="sticker1">⌨️</div>
-    <div class="sticker2">🚀</div>
-    <div class="sticker3">⚡</div>
-    <div class="sticker4">💻</div>
-  </div>
-
   <div class="container">
     <h1 class="title">
       <span class="typing-text">Typing Speed Tester</span>
@@ -154,9 +143,6 @@
     <form action="./page1.html" method="GET">
         <button class="enter-button">Enter Test ➜</button>
     </form>
-    
-
-
   </div>
 </body>
 </html>
