@@ -1,30 +1,198 @@
-<!-- page3.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speed Typing Test - Results</title>
-    <link rel="stylesheet" href="page3.css">
+    <title>Typing Test Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .results-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .btn {
+            background: #00ff88;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        #recordsChart {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .congratulations {
+            color: #00ff88;
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="page active" id="page3">
-            <h1>Test Results</h1>
-            <div class="result">
-                <p>Words Per Minute: <span id="wpm">0</span></p>
-                <p>Accuracy: <span id="accuracy">0</span>%</p>
-                <p>Time Taken: <span id="timeTaken">0</span> seconds</p>
-                <div id="congratulations"></div>
-            </div>
+    <div class="results-container">
+        <h1>Your Typing Test Results</h1>
+        <div class="result-item">
+            <span>Words Per Minute (WPM):</span>
+            <strong id="wpm">0</strong>
+        </div>
+        <div class="result-item">
+            <span>Accuracy:</span>
+            <strong id="accuracy">0</strong>%
+        </div>
+        <div class="result-item">
+            <span>Time Taken:</span>
+            <strong id="timeTaken">0</strong> seconds
+        </div>
+        <div id="congratulations"></div>
+        <canvas id="recordsChart"></canvas>
+        <div>
             <button class="btn" onclick="viewRecords()">View Records</button>
-            <form action="./page2.html" method="GET">
-                <button class="btn" >Try Again</button>
-            </form>
-            
+            <button class="btn" onclick="restartTest()">Restart Test</button>
         </div>
     </div>
-    <script src="shared.js"></script>
-    <script src="page3.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateResults();
+        });
+
+        function calculateResults() {
+            const typedText = sessionStorage.getItem('typedText');
+            const startTime = new Date(sessionStorage.getItem('testStart'));
+            const endTime = new Date(sessionStorage.getItem('testEnd'));
+            const difficulty = sessionStorage.getItem('testDifficulty');
+            
+            const texts = {
+                beginner: "The quick brown fox jumps over the lazy dog.",
+                medium: "Programming is the process of creating a set of instructions.",
+                high: "In quantum mechanics quantum entanglement is a fundamental phenomenon."
+            };
+            
+            const currentText = texts[difficulty];
+            
+            const words = typedText.trim().split(/\s+/).length;
+            const timeInMinutes = (endTime - startTime) / 1000 / 60;
+            const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
+            const wpm = Math.round(words / timeInMinutes);
+            
+            let correctChars = 0;
+            const minLength = Math.min(typedText.length, currentText.length);
+            for (let i = 0; i < minLength; i++) {
+                if (typedText[i] === currentText[i]) {
+                    correctChars++;
+                }
+            }
+            
+            const accuracy = Math.round((correctChars / currentText.length) * 100);
+            
+            document.getElementById('wpm').textContent = wpm;
+            document.getElementById('accuracy').textContent = accuracy;
+            document.getElementById('timeTaken').textContent = timeTakenSeconds;
+            
+            if (accuracy >= 95) {
+                document.getElementById('congratulations').innerHTML = 
+                    '<div class="congratulations">🎉 Congratulations! Outstanding Accuracy! 🎉</div>';
+            }
+            
+            saveRecord(wpm, accuracy, timeTakenSeconds, difficulty);
+            createRecordsChart();
+        }
+
+        function saveRecord(wpm, accuracy, timeTaken, difficulty) {
+            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
+            const newRecord = {
+                date: new Date().toISOString(),
+                difficulty,
+                wpm,
+                accuracy,
+                timeTaken
+            };
+            records.push(newRecord);
+            localStorage.setItem('typingRecords', JSON.stringify(records));
+        }
+
+        function createRecordsChart() {
+            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
+            const ctx = document.getElementById('recordsChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: records.map((r, index) => `Test ${index + 1}`),
+                    datasets: [
+                        {
+                            label: 'WPM',
+                            data: records.map(r => r.wpm),
+                            borderColor: '#00ff88',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Accuracy',
+                            data: records.map(r => r.accuracy),
+                            borderColor: '#ff4444',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Performance Tracking'
+                        }
+                    }
+                }
+            });
+        }
+
+        function viewRecords() {
+            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
+            let recordsHTML = '<h2>Typing Test Records</h2>';
+            records.forEach((record, index) => {
+                recordsHTML += `
+                    <div class="result-item">
+                        <span>Test ${index + 1} (${record.difficulty}):</span>
+                        <span>WPM: ${record.wpm} | Accuracy: ${record.accuracy}%</span>
+                    </div>
+                `;
+            });
+            document.querySelector('.results-container').innerHTML = recordsHTML;
+        }
+
+        function restartTest() {
+            window.location.href = 'index.html';  // Assumes your first page is named index.html
+        }
+    </script>
 </body>
 </html>
