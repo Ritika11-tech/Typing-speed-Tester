@@ -2,197 +2,278 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Typing Test Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Typing Test - Difficulty Selection</title>
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-            background-color: #1a1a2e;
-            color: white;
+        }
+        body {
+            color: #fff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            background-color: #1a1a2e; /* Fallback background color */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900"><rect fill="%231a1a2e" width="1600" height="900"/><polygon points="0,600 0,900 1600,900 1600,0" fill="%2300ff88" opacity="0.1"/></svg>');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
         }
-        .results-container {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 30px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
             text-align: center;
             width: 100%;
-            max-width: 600px;
         }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
+        .page {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
         .btn {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
             background: #00ff88;
             color: #1a1a2e;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 25px;
             cursor: pointer;
+            margin: 1rem;
             transition: all 0.3s ease;
+            width: auto;
         }
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
         }
-        #recordsChart {
-            max-width: 500px;
-            margin: 20px auto;
+        .difficulty-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
         }
-        .congratulations {
+        .typing-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+            width: 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+        .timer {
+            font-size: 2rem;
+            margin-bottom: 1rem;
             color: #00ff88;
-            font-size: 1.2em;
-            margin: 15px 0;
+        }
+        #typing-input {
+            height: 100px;
+            width: 100%;
+            max-width: 1000px;
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+        }
+        .text-display {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .text-display span.correct { color: #00ff88; }
+        .text-display span.incorrect { 
+            color: #ff4444; 
+            text-decoration: underline; 
+        }
+        .text-display span.current {
+            background-color: rgba(0, 255, 136, 0.2);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div class="results-container">
-        <h1>Your Typing Test Results</h1>
-        <div class="result-item">
-            <span>Words Per Minute (WPM):</span>
-            <strong id="wpm">0</strong>
-        </div>
-        <div class="result-item">
-            <span>Accuracy:</span>
-            <strong id="accuracy">0</strong>%
-        </div>
-        <div class="result-item">
-            <span>Time Taken:</span>
-            <strong id="timeTaken">0</strong> seconds
-        </div>
-        <div id="congratulations"></div>
-        <canvas id="recordsChart"></canvas>
-        <div>
-            <button class="btn" onclick="viewRecords()">View Records</button>
-            <button class="btn" onclick="restartTest()">Restart Test</button>
+    <div class="container">
+        <div class="page" id="page2">
+            <h1>Select Typing Test Difficulty</h1>
+            <div class="difficulty-container">
+                <button class="btn" id="beginnerBtn">Beginner</button>
+                <button class="btn" id="mediumBtn">Medium</button>
+                <button class="btn" id="highBtn">High</button>
+            </div>
+            <div class="typing-container">
+                <div class="timer">0</div>
+                <div class="text-display"></div>
+                <textarea id="typing-input" rows="10"></textarea>
+                <button class="btn" id="submitBtn">Submit Test</button>
+               
+            </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            calculateResults();
-        });
+        // Secure storage utility
+        const StorageUtil = {
+            save: function(key, value) {
+                try {
+                    sessionStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error("Storage error:", e);
+                }
+            },
+            get: function(key) {
+                try {
+                    const item = sessionStorage.getItem(key);
+                    return item ? JSON.parse(item) : null;
+                } catch (e) {
+                    console.error("Storage retrieval error:", e);
+                    return null;
+                }
+            }
+        };
 
-        function calculateResults() {
-            const typedText = sessionStorage.getItem('typedText');
-            const startTime = new Date(sessionStorage.getItem('testStart'));
-            const endTime = new Date(sessionStorage.getItem('testEnd'));
-            const difficulty = sessionStorage.getItem('testDifficulty');
-            
-            const texts = {
+        // Test configuration
+        const testConfig = {
+            texts: {
                 beginner: "The quick brown fox jumps over the lazy dog.",
                 medium: "Programming is the process of creating a set of instructions.",
                 high: "In quantum mechanics quantum entanglement is a fundamental phenomenon."
-            };
-            
-            const currentText = texts[difficulty];
-            
-            const words = typedText.trim().split(/\s+/).length;
-            const timeInMinutes = (endTime - startTime) / 1000 / 60;
-            const timeTakenSeconds = Math.round((endTime - startTime) / 1000);
-            const wpm = Math.round(words / timeInMinutes);
-            
-            let correctChars = 0;
-            const minLength = Math.min(typedText.length, currentText.length);
-            for (let i = 0; i < minLength; i++) {
-                if (typedText[i] === currentText[i]) {
-                    correctChars++;
-                }
+            },
+            state: {
+                currentText: '',
+                difficulty: '',
+                startTime: null,
+                endTime: null
             }
-            
-            const accuracy = Math.round((correctChars / currentText.length) * 100);
-            
-            document.getElementById('wpm').textContent = wpm;
-            document.getElementById('accuracy').textContent = accuracy;
-            document.getElementById('timeTaken').textContent = timeTakenSeconds;
-            
-            if (accuracy >= 95) {
-                document.getElementById('congratulations').innerHTML = 
-                    '<div class="congratulations">🎉 Congratulations! Outstanding Accuracy! 🎉</div>';
+        };
+
+        // DOM Elements
+        const elements = {
+            difficultyBtns: {
+                beginner: document.getElementById('beginnerBtn'),
+                medium: document.getElementById('mediumBtn'),
+                high: document.getElementById('highBtn')
+            },
+            typingContainer: document.querySelector('.typing-container'),
+            textDisplay: document.querySelector('.text-display'),
+            typingInput: document.getElementById('typing-input'),
+            timer: document.querySelector('.timer'),
+            submitBtn: document.getElementById('submitBtn')
+        };
+
+        // Timer management
+        const TimerManager = {
+            interval: null,
+            seconds: 0,
+            start: function() {
+                this.seconds = 0;
+                this.update();
+                this.interval = setInterval(() => {
+                    this.seconds++;
+                    this.update();
+                }, 1000);
+            },
+            stop: function() {
+                clearInterval(this.interval);
+            },
+            update: function() {
+                elements.timer.textContent = this.seconds;
             }
-            
-            saveRecord(wpm, accuracy, timeTakenSeconds, difficulty);
-            createRecordsChart();
+        };
+
+        // Event Listeners
+        function initializeEventListeners() {
+            Object.keys(elements.difficultyBtns).forEach(level => {
+                elements.difficultyBtns[level].addEventListener('click', () => startTest(level));
+            });
+
+            elements.typingInput.addEventListener('input', handleTyping);
+            elements.submitBtn.addEventListener('click', endTest);
         }
 
-        function saveRecord(wpm, accuracy, timeTaken, difficulty) {
-            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
-            const newRecord = {
-                date: new Date().toISOString(),
-                difficulty,
-                wpm,
-                accuracy,
-                timeTaken
-            };
-            records.push(newRecord);
-            localStorage.setItem('typingRecords', JSON.stringify(records));
+        // Test Flow Functions
+        function startTest(difficulty) {
+            // Set current text based on difficulty
+            testConfig.state.currentText = testConfig.texts[difficulty];
+            testConfig.state.difficulty = difficulty;
+            
+            // Prepare text display
+            elements.textDisplay.innerHTML = testConfig.state.currentText
+                .split('')
+                .map(char => `<span>${char}</span>`)
+                .join('');
+            
+            // Show typing container, hide difficulty buttons
+            elements.typingContainer.style.display = 'block';
+            document.querySelector('.difficulty-container').style.display = 'none';
+            
+            // Prepare input
+            elements.typingInput.value = '';
+            elements.typingInput.focus();
+            
+            // Start timer and save start time
+            testConfig.state.startTime = new Date();
+            StorageUtil.save('testStart', testConfig.state.startTime);
+            TimerManager.start();
         }
 
-        function createRecordsChart() {
-            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
-            const ctx = document.getElementById('recordsChart').getContext('2d');
+        function handleTyping(e) {
+            const typedText = e.target.value;
+            const characters = document.querySelectorAll('.text-display span');
             
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: records.map((r, index) => `Test ${index + 1}`),
-                    datasets: [
-                        {
-                            label: 'WPM',
-                            data: records.map(r => r.wpm),
-                            borderColor: '#00ff88',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Accuracy',
-                            data: records.map(r => r.accuracy),
-                            borderColor: '#ff4444',
-                            tension: 0.1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Performance Tracking'
-                        }
-                    }
+            characters.forEach((char, index) => {
+                char.classList.remove('correct', 'incorrect', 'current');
+                
+                if (index < typedText.length) {
+                    char.classList.add(
+                        char.innerText === typedText[index] ? 'correct' : 'incorrect'
+                    );
+                } else if (index === typedText.length) {
+                    char.classList.add('current');
                 }
             });
+            
+            if (typedText === testConfig.state.currentText) {
+                endTest();
+            }
         }
 
-        function viewRecords() {
-            const records = JSON.parse(localStorage.getItem('typingRecords') || '[]');
-            let recordsHTML = '<h2>Typing Test Records</h2>';
-            records.forEach((record, index) => {
-                recordsHTML += `
-                    <div class="result-item">
-                        <span>Test ${index + 1} (${record.difficulty}):</span>
-                        <span>WPM: ${record.wpm} | Accuracy: ${record.accuracy}%</span>
-                    </div>
-                `;
-            });
-            document.querySelector('.results-container').innerHTML = recordsHTML;
+        function endTest() {
+            // Stop timer
+            TimerManager.stop();
+            
+            // Record end time
+            testConfig.state.endTime = new Date();
+            StorageUtil.save('testEnd', testConfig.state.endTime);
+            StorageUtil.save('typedText', elements.typingInput.value);
+            StorageUtil.save('testDifficulty', testConfig.state.difficulty);
+            
+            // Navigate to results page (you'd replace this with actual navigation)
+            alert('Test completed! Redirecting to results...');
         }
 
-        function restartTest() {
-            window.location.href = 'index.html';  // Assumes your first page is named index.html
-        }
+        // Initialize
+        initializeEventListeners();
     </script>
 </body>
 </html>
