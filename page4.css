@@ -5,7 +5,6 @@
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
-
 body {
     color: #fff;
     min-height: 100vh;
@@ -16,44 +15,38 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed; /* Added for mobile scrolling */
 }  
-
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
+    width: 100%; /* Added for mobile responsiveness */
 }
-
 .page {
     display: none;
     animation: fadeIn 0.5s ease-in;
 }
-
 .active {
     display: block;
 }
-
 h1, h2, h3 {
     margin-bottom: 1rem;
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
-
 h1 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
 }
-
 h2 {
     font-size: 2rem;
     color: #00ff88;
 }
-
 h3 {
     font-size: 1.5rem;
     color: #00ff88;
 }
-
 .btn {
     padding: 1rem 2rem;
     font-size: 1.2rem;
@@ -64,17 +57,16 @@ h3 {
     cursor: pointer;
     margin: 1rem;
     transition: all 0.3s ease;
+    width: auto; /* Added for mobile */
 }
-
 .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
 }
-
 .records-container {
     margin: 2rem 0;
+    width: 100%; /* Added for mobile */
 }
-
 .stats-container {
     display: flex;
     justify-content: center;
@@ -82,53 +74,85 @@ h3 {
     margin-bottom: 3rem;
     flex-wrap: wrap;
 }
-
 .stat-card {
     background: rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 16px;
     min-width: 250px;
+    width: 100%; /* Added for mobile */
+    max-width: 350px; /* Added to prevent overly wide cards */
     transition: all 0.3s ease;
+    margin: 0.5rem; /* Added for spacing on mobile */
 }
-
 .stat-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
 }
-
 .stat-card p {
     margin: 0.5rem 0;
     font-size: 1.2rem;
 }
-
 .records-table {
     background: rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 16px;
     margin-top: 2rem;
     overflow-x: auto;
+    width: 100%; /* Added for mobile */
+    box-sizing: border-box; /* Added for mobile */
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
 }
-
 th, td {
     padding: 1rem;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem; /* Slightly smaller text for mobile */
 }
-
 th {
     background: rgba(0, 255, 136, 0.1);
     font-weight: bold;
     color: #00ff88;
 }
-
 tr:hover {
     background: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile Responsiveness Media Queries */
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    h3 {
+        font-size: 1.2rem;
+    }
+    .btn {
+        width: 80%;
+        max-width: 300px;
+        margin: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    .stat-card {
+        padding: 1.5rem;
+        min-width: 100%;
+    }
+    .stat-card p {
+        font-size: 1rem;
+    }
+    .records-table {
+        padding: 1rem;
+    }
+    th, td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
 }
 
 @keyframes fadeIn {
