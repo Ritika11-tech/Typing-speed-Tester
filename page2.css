@@ -5,6 +5,7 @@
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
+
 body {
     color: #fff;
     min-height: 100vh;
@@ -12,33 +13,37 @@ body {
     justify-content: center;
     align-items: center;
     background-image: url(https://img.freepik.com/free-photo/abstract-geometric-border-connecting-dots-digital-technology-vector-design_53876-160260.jpg?t=st=1730972875~exp=1730976475~hmac=fd4f763f7e0019895bbabe0c32f80b4ea6dd1836bafa58598dba4aa736d7f0d8&w=1380);
+   ;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-attachment: fixed; /* Added for mobile compatibility */
 }
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
-    width: 100%; /* Added for mobile */
 }
+
 .page {
     display: none;
     animation: fadeIn 0.5s ease-in;
 }
+
 .active {
     display: block;
 }
+
 h1 {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     margin-bottom: 2rem;
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
+
 .btn {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
     border: none;
     border-radius: 25px;
     background: #00ff88;
@@ -46,36 +51,36 @@ h1 {
     cursor: pointer;
     margin: 1rem;
     transition: all 0.3s ease;
-    width: auto; /* Added for mobile */
 }
+
 .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
 }
+
 .difficulty-container {
     display: flex;
     justify-content: center;
     gap: 2rem;
     margin: 2rem 0;
-    flex-wrap: wrap; /* Added for mobile */
 }
+
 .typing-container {
     background: rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 16px;
     margin: 2rem 0;
-    width: 100%; /* Added for mobile */
-    box-sizing: border-box; /* Added for mobile */
 }
+
 .timer {
     font-size: 2rem;
     margin-bottom: 1rem;
     color: #00ff88;
 }
+
 #typing-input {
     height: 100px;
-    width: 100%; /* Changed from fixed width */
-    max-width: 1000px; /* Maintain max-width */
+    width: 1000px;
     font-size: 1.2rem;
     font-style: normal;
     font-family: Georgia, 'Times New Roman', Times, serif;
@@ -84,12 +89,13 @@ h1 {
     border: none;
     border-radius: 8px;
     color: #fff;
-    box-sizing: border-box; /* Added for mobile */
 }
+
 #typing-input:focus {
     outline: none;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
 }
+
 .text-display {
     font-size: 1.2rem;
     margin-bottom: 2rem;
@@ -98,65 +104,26 @@ h1 {
     background: rgba(255, 255, 255, 0.05);
     padding: 2rem;
     border-radius: 8px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -webkit-overflow-scrolling: touch;
 }
+
 .text-display span {
     position: relative;
-    display: inline-block;
-    max-width: 100%;
 }
+
 .text-display span.correct {
     color: #00ff88;
 }
+
 .text-display span.incorrect {
     color: #ff4444;
     text-decoration: underline;
 }
+
 .text-display span.current {
     background-color: rgba(0, 255, 136, 0.2);
 }
 
-/* Mobile Responsiveness Media Queries */
-@media screen and (max-width: 768px) {
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    .text-display {
-        font-size: 1rem;
-        padding: 1rem;
-    }
-
-    #typing-input {
-        height: 80px;
-        font-size: 1rem;
-    }
-
-    .btn {
-        width: 80%;
-        max-width: 300px;
-        margin: 0.5rem;
-    }
-
-    .difficulty-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-}
-
 @keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
